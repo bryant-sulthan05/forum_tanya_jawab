@@ -13,7 +13,7 @@ const router = express.Router();
 router.get('/my-answers', verifyUser, getMyAnswerRecords);
 router.get('/user-answers/:id', getAnswerByUser);
 router.post('/post-answer/:id', verifyUser, postAnswer);
-router.put('/update-answer/:id', verifyUser, updateAnswer);
+router.patch('/update-answer/:id', verifyUser, updateAnswer);
 router.delete('/delete-answer/:id', verifyUser, deleteAnswer);
 
 export default router;

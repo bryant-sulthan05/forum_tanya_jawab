@@ -4,6 +4,7 @@ import Answer from "../models/Answer.js";
 import { Op } from "sequelize";
 import path from "path";
 import fs from "fs";
+import { url } from "inspector";
 
 export const getAllQuestions = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ export const getAllQuestions = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'image', 'url'],
+                    attributes: ['id', 'name', 'username', 'media', 'url'],
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -36,7 +37,7 @@ export const getQuestionsByTitle = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'image', 'url'],
+                    attributes: ['id', 'name', 'username', 'media', 'url'],
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -57,7 +58,7 @@ export const getQuestionById = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'image', 'url'],
+                    attributes: ['id', 'name', 'username', 'media', 'url'],
                 },
                 {
                     model: Answer,
@@ -66,7 +67,7 @@ export const getQuestionById = async (req, res) => {
                         {
                             model: Users,
                             as: 'user',
-                            attributes: ['id', 'name', 'username', 'image', 'url'],
+                            attributes: ['id', 'name', 'username', 'media', 'url'],
                         },
                     ]
                 }
@@ -94,7 +95,7 @@ export const getQuestionsByUserId = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'image', 'url'],
+                    attributes: ['id', 'name', 'username', 'media', 'url'],
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -140,7 +141,7 @@ export const createQuestion = async (req, res) => {
             await Question.create({
                 title: title,
                 question: question,
-                image: fileName,
+                media: fileName,
                 url: url,
                 userId: req.userId
             });
@@ -165,6 +166,13 @@ export const editQuestion = async (req, res) => {
     const file = req.files ? req.files.file : null;
 
     try {
+        const getImg = await Question.findOne({
+            attributes: ['media', 'url'],
+            where: {
+                id: req.params.id
+            }
+        });
+
         if (file) {
             const size = file.data.length;
             const ext = path.extname(file.name);
@@ -173,13 +181,17 @@ export const editQuestion = async (req, res) => {
             const url = `${req.protocol}://${req.get("host")}/img/question/${fileName}`;
             const allowedType = ['.jpeg', '.jpg', '.png'];
 
-            if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ msg: "Gambar harus berekstensi .jpeg, .jpg, dan .png" });
+            if (!allowedType.includes(ext.toLowerCase())) {
+                return res.status(422).json({ msg: "Gambar harus berekstensi .jpeg, .jpg, dan .png" });
+            }
+            if (size > 5000000) {
+                return res.status(422).json({ msg: "Ukuran file maksimal 5mb" });
+            }
 
-            if (size > 5000000) return res.status(422).json({ msg: "Ukuran file maksimal 5mb" });
             await Question.update({
                 title: title,
                 question: question,
-                image: fileName,
+                media: fileName,
                 url: url,
             }, {
                 where: {
@@ -187,18 +199,36 @@ export const editQuestion = async (req, res) => {
                 }
             });
             file.mv(`./public/img/question/${fileName}`, (err) => {
-                if (err) return res.status(500).json({ msg: err.message });
+                if (err) {
+                    return res.status(500).json({ msg: err.message });
+                }
             });
-            const imagePath = `./public/img/question/${question.image}`;
-            if (fs.existsSync(imagePath)) {
-                fs.unlink(imagePath, (err) => {
-                    if (err) return res.status(500).json({ message: err.message });
-                });
+            if (getImg.media) {
+                const imagePath = `./public/img/question/${getImg.media}`;
+                if (fs.existsSync(imagePath)) {
+                    fs.unlink(imagePath, (err) => {
+                        if (err) {
+                            return res.status(500).json({ message: err.message });
+                        }
+                    });
+                }
             }
         } else {
+            if (getImg.media) {
+                const imagePath = `./public/img/question/${getImg.media}`;
+                if (fs.existsSync(imagePath)) {
+                    fs.unlink(imagePath, (err) => {
+                        if (err) {
+                            return res.status(500).json({ message: err.message });
+                        }
+                    });
+                }
+            }
             await Question.update({
                 title: title,
                 question: question,
+                media: null,
+                url: null
             }, {
                 where: {
                     id: req.params.id
@@ -209,10 +239,11 @@ export const editQuestion = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 export const deleteQuestion = async (req, res) => {
     try {
+
         const question = await Question.findOne({
             where: {
                 [Op.and]: [
@@ -222,7 +253,7 @@ export const deleteQuestion = async (req, res) => {
             }
         });
         if (!question) return res.status(404).json({ message: "Tidak menemukan pertanyaan, kemungkinan pertanyaan sudah dihapus" });
-        const imagePath = `./public/img/question/${question.image}`;
+        const imagePath = `./public/img/question/${question.media}`;
         if (fs.existsSync(imagePath)) {
             fs.unlink(imagePath, (err) => {
                 if (err) return res.status(500).json({ message: err.message });
