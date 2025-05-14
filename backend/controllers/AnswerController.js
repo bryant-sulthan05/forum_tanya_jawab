@@ -192,7 +192,7 @@ export const deleteAnswer = async (req, res) => {
         const answerData = await Answer.findOne({
             where: {
                 [Op.and]: [
-                    { id: id },
+                    { id: req.params.id },
                     { userId: req.userId }
                 ]
             }
@@ -206,7 +206,7 @@ export const deleteAnswer = async (req, res) => {
         await Answer.destroy({
             where: {
                 [Op.and]: [
-                    { id: id },
+                    { id: req.params.id },
                     { userId: req.userId }
                 ]
             }
