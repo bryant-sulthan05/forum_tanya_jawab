@@ -1,19 +1,24 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const userFromStorage = localStorage.getItem('user')
+    ? JSON.parse(localStorage.getItem('user'))
+    : null;
+
 const initialState = {
-    user: null,
+    user: userFromStorage,
     isError: false,
     isSuccess: false,
     isLoading: false,
     message: ""
-}
+};
 
-export const LoginUser = createAsyncThunk("user/LoginUser", async (user, thunkAPI) => {
+
+export const LoginUser = createAsyncThunk("user/LoginUser", async (users, thunkAPI) => {
     try {
         const response = await axios.post('http://localhost:5000/login', {
-            email: user.email,
-            password: user.password
+            email: users.email,
+            password: users.password
         });
         return response.data;
     } catch (error) {
@@ -24,7 +29,7 @@ export const LoginUser = createAsyncThunk("user/LoginUser", async (user, thunkAP
     }
 });
 
-export const Profile = createAsyncThunk("user/Profile", async (_, thunkAPI) => {
+export const getMe = createAsyncThunk("user/getMe", async (_, thunkAPI) => {
     try {
         const response = await axios.get('http://localhost:5000/me');
         return response.data;
@@ -54,26 +59,31 @@ export const authSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = true;
             state.user = action.payload;
+            localStorage.setItem('user', JSON.stringify(action.payload)); // simpan ke localStorage
         });
         builder.addCase(LoginUser.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
-            state.pesan = action.payload;
+            state.message = action.payload;
         });
 
-        // Get User LoginUser
-        builder.addCase(Profile.pending, (state) => {
+        builder.addCase(getMe.pending, (state) => {
             state.isLoading = true;
         });
-        builder.addCase(Profile.fulfilled, (state, action) => {
+        builder.addCase(getMe.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isSuccess = true;
             state.user = action.payload;
         });
-        builder.addCase(Profile.rejected, (state, action) => {
+        builder.addCase(getMe.rejected, (state, action) => {
             state.isLoading = false;
             state.isError = true;
             state.message = action.payload;
+        });
+        builder.addCase(Logout.fulfilled, (state) => {
+            state.user = null;
+            state.isSuccess = false;
+            localStorage.removeItem('user');
         });
     }
 });

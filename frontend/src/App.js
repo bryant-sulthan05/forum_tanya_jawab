@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./views/Dashboard";
 import Login from "./views/Login";
+import Register from "./views/Register";
+import Answer from "./views/Answer";
+import Profile from "./views/Profile";
 
 function App() {
   return (
@@ -9,7 +12,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/Login" element={<Login />} />
-          <Route path="/contact" element={<h1>Contact</h1>} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/Answers/:id" element={<Answer />} />
+          <Route path="/Profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </div>

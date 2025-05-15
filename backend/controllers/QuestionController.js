@@ -4,7 +4,6 @@ import Answer from "../models/Answer.js";
 import { Op } from "sequelize";
 import path from "path";
 import fs from "fs";
-import { url } from "inspector";
 
 export const getAllQuestions = async (req, res) => {
     try {
@@ -13,7 +12,7 @@ export const getAllQuestions = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'media', 'url'],
+                    attributes: ['id', 'name', 'username'],
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -37,7 +36,7 @@ export const getQuestionsByTitle = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'media', 'url'],
+                    attributes: ['id', 'name', 'username', 'image', 'url'],
                 }
             ],
             order: [['createdAt', 'DESC']],
@@ -58,7 +57,7 @@ export const getQuestionById = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'media', 'url'],
+                    attributes: ['id', 'name', 'username', 'image', 'url'],
                 },
                 {
                     model: Answer,
@@ -67,19 +66,13 @@ export const getQuestionById = async (req, res) => {
                         {
                             model: Users,
                             as: 'user',
-                            attributes: ['id', 'name', 'username', 'media', 'url'],
+                            attributes: ['id', 'name', 'username', 'image', 'url'],
                         },
                     ]
                 }
             ],
         });
-        if (!question) return res.status(404).json({ message: "Tidak menemukan pertanyaan, kemungkinan pertanyaan sudah dihapus" });
-
-        if (question.answers.length > 0) {
-            res.status(200).json(question);
-        } else {
-            res.status(400).json({ message: "Pertanyaan ini belum memiliki jawaban. Jadilah yang pertanya menjawab" });
-        }
+        res.status(200).json(question);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -95,7 +88,7 @@ export const getQuestionsByUserId = async (req, res) => {
                 {
                     model: Users,
                     as: 'user',
-                    attributes: ['id', 'name', 'username', 'media', 'url'],
+                    attributes: ['id', 'name', 'username', 'image', 'url'],
                 }
             ],
             order: [['createdAt', 'DESC']],

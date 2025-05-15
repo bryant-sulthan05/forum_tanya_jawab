@@ -1,9 +1,29 @@
 import Users from "../models/Users.js";
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import path from "path";
 import fs from "fs";
+
+export const getAllAnswers = async (req, res) => {
+    try {
+        const answerCounts = await Answer.findAll({
+            attributes: [
+                'questionId',
+                [Sequelize.fn('COUNT', Sequelize.col('id')), 'answerCount']
+            ],
+            group: ['questionId']
+        });
+        const result = {};
+        answerCounts.forEach(item => {
+            result[item.questionId] = parseInt(item.dataValues.answerCount, 10);
+        });
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
 
 export const getMyAnswerRecords = async (req, res) => {
     try {
@@ -21,7 +41,7 @@ export const getMyAnswerRecords = async (req, res) => {
                         {
                             model: Users,
                             as: 'user',
-                            attributes: ['id', 'name', 'username', 'media', 'url']
+                            attributes: ['id', 'name', 'username', 'image', 'url']
                         }
                     ]
                 }
