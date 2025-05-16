@@ -4,6 +4,7 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import Answer from "./views/Answer";
 import Profile from "./views/Profile";
+import ForgotPass from "./views/Components/ForgotPass";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/Register" element={<Register />} />
           <Route path="/Answers/:id" element={<Answer />} />
           <Route path="/Profile" element={<Profile />} />
+          <Route path="/ForgotPass" element={<ForgotPass />} />
         </Routes>
       </BrowserRouter>
     </div>

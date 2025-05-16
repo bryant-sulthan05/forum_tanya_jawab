@@ -2,7 +2,9 @@ import Users from '../models/Users.js';
 import argon2 from 'argon2';
 import { Op } from 'sequelize';
 import path from 'path';
+import nodemailer from 'nodemailer';
 
+const otpStore = new Map();
 export const cekProfile = async (req, res) => {
     try {
         const { id } = req.params;
@@ -30,7 +32,7 @@ export const editProfile = async (req, res) => {
     if (!user) return res.status(404).json({ msg: 'User tidak ditemukan' });
 
     const { name, username, password, confPassword, mail, phone } = req.body;
-    const file = req.files.file;
+    const file = req.files ? req.files.file : null;
     const size = file.data.length;
     const ext = path.extname(file.name);
     const uniqueIdentifier = Date.now();
@@ -76,37 +78,36 @@ export const editProfile = async (req, res) => {
 
     file.mv(`./public/img/profile/${fileName}`, async (err) => {
         if (err) return res.status(500).json({ msg: err.message });
-        try {
-            await Users.update({
-                name: name,
-                username: username,
-                password: hashPassword,
-                image: fileName,
-                url: url,
-                email: email,
-                tlp: tlp
-            },
-                {
-                    where: {
-                        id: user.id
-                    }
-                });
-            res.status(200).json({ msg: 'Update berhasil' });
-        } catch (error) {
-            res.status(400).json({ msg: error.message });
-        }
     });
+    try {
+        await Users.update({
+            name: name,
+            username: username,
+            password: hashPassword,
+            image: fileName,
+            url: url,
+            email: email,
+            tlp: tlp
+        },
+            {
+                where: {
+                    id: user.id
+                }
+            });
+        res.status(200).json({ msg: 'Update berhasil' });
+    } catch (error) {
+        res.status(400).json({ msg: error.message });
+    }
 }
 
 export const regUser = async (req, res) => {
-    const { name, username, password, confPassword, email, tlp } = req.body; // request parameters
-
+    const { name, username, password, confPassword, email, tlp } = req.body;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$!&*]).{8,}$/;
     if (!passwordRegex.test(password)) {
         return res.status(400).json({ msg: 'Password setidaknya mengandung satu huruf kapital, angka, dan simbol (@,#,$,!,&,*), serta memiliki panjang minimal 8 karakter.' });
-    } // Jika password tidak sesuai ketentuan
-    if (password !== confPassword) return res.status(400).json({ msg: 'password dan konfirmasi password tidak sama' }); // Jika password tidak sesuai dengan confPassword
-    const hashPassword = await argon2.hash(password); // Enkripsi password
+    }
+    if (password !== confPassword) return res.status(400).json({ msg: 'password dan konfirmasi password tidak sama' });
+    const hashPassword = await argon2.hash(password);
     const emailUser = await Users.findOne({
         attributes: ['email', 'tlp'],
         where: {
@@ -134,3 +135,76 @@ export const regUser = async (req, res) => {
         res.status(400).json({ msg: error.message });
     }
 }
+
+export const forgotPasswordRequest = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await Users.findOne({ where: { email } });
+        if (!user) return res.status(404).json({ msg: 'Email tidak ditemukan' });
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        otpStore.set(email, { otp, expires: Date.now() + 5 * 60 * 1000 });
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'bryantv0.2.0@gmail.com',
+                pass: 'wugigxwdcqhpisrd'
+            }
+        });
+
+        await transporter.sendMail({
+            from: '"Support" <bryantv0.2.0@gmail.com>',
+            to: email,
+            subject: 'Kode OTP Reset Password',
+            text: `Kode OTP Anda adalah: ${otp}`
+        });
+
+        res.status(200).json({ msg: 'OTP telah dikirim ke email' });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+export const verifyOtp = (req, res) => {
+    const { email, otp } = req.body;
+
+    const data = otpStore.get(email);
+    if (!data) return res.status(400).json({ msg: 'OTP tidak ditemukan atau kadaluarsa' });
+
+    if (Date.now() > data.expires) {
+        otpStore.delete(email);
+        return res.status(400).json({ msg: 'OTP kadaluarsa' });
+    }
+
+    if (data.otp !== otp) {
+        return res.status(400).json({ msg: 'OTP salah' });
+    }
+
+    res.status(200).json({ msg: 'OTP valid' });
+};
+
+export const resetPassword = async (req, res) => {
+    const { email, password, confPassword } = req.body;
+
+    if (password !== confPassword) {
+        return res.status(400).json({ msg: 'Password dan konfirmasi tidak sama' });
+    }
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$!&*]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ msg: 'Password tidak sesuai format' });
+    }
+
+    try {
+        const hashPassword = await argon2.hash(password);
+        await Users.update({ password: hashPassword }, { where: { email } });
+
+        otpStore.delete(email);
+        res.status(200).json({ msg: 'Password berhasil direset' });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};

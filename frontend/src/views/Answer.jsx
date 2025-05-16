@@ -41,7 +41,18 @@ const Answer = () => {
 
     return (
         <Layout>
-            <Box sx={{ background: 'linear-gradient(to bottom, #0C0950 0%, #2A5298 100%)', minHeight: { xs: '20vh', md: '80vh' } }}>
+            <Box sx={{
+                minHeight: { xs: '20vh', md: '80vh' },
+                backgroundImage: `
+                linear-gradient(to bottom, #0C0950 0%, #2A5298 100%),
+                url("/template2.png")
+                `,
+                width: '100%',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                backgroundSize: 'contain',
+                backgroundBlendMode: 'overlay'
+            }}>
                 <Navbar />
                 <Container maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
                     <Grid container spacing={4} sx={{ mt: '10rem', mb: '3rem' }}>
@@ -112,7 +123,7 @@ const Answer = () => {
                     <AnswerQuestion />
                 </Container>
             </section>
-        </Layout>
+        </Layout >
     )
 }
 

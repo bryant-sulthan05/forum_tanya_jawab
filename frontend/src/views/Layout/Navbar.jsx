@@ -26,6 +26,18 @@ export default function Navbar() {
     const [dataUser, setdataUser] = useState([]);
     const user = useSelector((state) => state.auth.user);
 
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const isScrolled = window.scrollY > 795;
+            setScrolled(isScrolled);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     useEffect(() => {
         if (user) {
             getdataUser();
@@ -40,7 +52,7 @@ export default function Navbar() {
     const logout = () => {
         dispatch(Logout());
         dispatch(reset());
-        navigate('/');
+        navigate('/')
     };
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -49,7 +61,16 @@ export default function Navbar() {
     const handleClose = () => setAnchorEl(null);
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#0F1158', boxShadow: 'none', padding: '10px' }}>
+        <AppBar
+            position="fixed"
+            sx={{
+                backgroundColor: scrolled ? '#0F1158' : 'transparent',
+                boxShadow: scrolled ? 2 : 'none',
+                padding: '10px',
+                transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+            }}>
             <Container maxWidth="xl">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography

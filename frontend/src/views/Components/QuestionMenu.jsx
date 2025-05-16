@@ -37,26 +37,9 @@ const QuestionMenu = ({ searchTerm }) => {
                 setIsLoading(false);
             }
         };
+
         fetchData();
     }, []);
-
-    useEffect(() => {
-        countAnswers();
-    }, []);
-
-    useEffect(() => {
-        getQuestions();
-    }, []);
-
-    const countAnswers = async () => {
-        const response = await axios.get('http://localhost:5000/count-answer');
-        setCanswer(response.data);
-    }
-
-    const getQuestions = async () => {
-        const response = await axios.get('http://localhost:5000/');
-        setQuestions(response.data);
-    }
 
     const Answer = async (questionId) => {
         await axios.get(`http://localhost:5000/question/${questionId}`);

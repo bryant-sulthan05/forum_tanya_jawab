@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
     Box, Container, Typography, InputBase, Button, Tooltip,
-    TextField, useMediaQuery, useTheme, Modal, ImageList
+    TextField, useMediaQuery, useTheme, Modal
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -107,7 +107,20 @@ const Dashboard = () => {
 
     return (
         <Layout>
-            <section style={{ background: 'linear-gradient(to bottom, #0C0950 0%, #2A5298 100%)', minHeight: '80vh' }}>
+            <Box
+                sx={{
+                    minHeight: '80vh',
+                    backgroundImage: `
+                    linear-gradient(to bottom, #0C0950 0%, #2A5298 100%),
+                    url("/template2.png")
+                    `,
+                    width: '100%',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundBlendMode: 'overlay'
+                }}
+            >
                 <Navbar />
                 <Container maxWidth="lg">
                     <Box
@@ -122,7 +135,7 @@ const Dashboard = () => {
                             color="#F6F1DE"
                             sx={{ fontFamily: 'Cal Sans', fontWeight: 400 }}
                         >
-                            Selamat Datang <span style={{ color: '#FFDB00' }}>{user?.username || ''}</span>, di Intelligentsia Guild!
+                            Selamat Datang di Intelligentsia Guild! <span style={{ color: '#FFDB00' }}>{user?.username || ''}</span>
                         </Typography>
 
                         <Box sx={{ width: '150px', height: '4px', backgroundColor: '#FFDB00' }} />
@@ -178,51 +191,144 @@ const Dashboard = () => {
                                     Buat Pertanyaan
                                 </Typography>
                                 <form onSubmit={uploadQuestion}>
-                                    <TextField label="Judul Pertanyaan" name="title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth required variant="outlined" sx={{ mb: 2 }} />
-                                    <TextField label="Deskripsi Pertanyaan" name="question" value={question} onChange={(e) => setQuestion(e.target.value)} fullWidth required multiline rows={4} variant="outlined" sx={{ mb: 2 }} />
-                                    {preview ? (
-                                        <ImageList sx={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Box>
-                                                <img src={preview} alt="preview" loading='lazy' style={{ width: isSmallScreen ? 150 : 320, height: isSmallScreen ? 150 : 320, marginTop: '1rem' }} />
+                                    <TextField
+                                        label="Judul Pertanyaan"
+                                        name="title"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        fullWidth
+                                        required
+                                        variant="outlined"
+                                        sx={{ mb: 2 }}
+                                    />
+                                    <TextField
+                                        label="Deskripsi Pertanyaan"
+                                        name="question"
+                                        value={question}
+                                        onChange={(e) => setQuestion(e.target.value)}
+                                        fullWidth
+                                        required
+                                        multiline
+                                        rows={4}
+                                        variant="outlined"
+                                        sx={{ mb: 2 }}
+                                    />
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="subtitle1" sx={{ fontFamily: 'Cal Sans', mb: 1 }}>
+                                            Unggah Gambar (Opsional)
+                                        </Typography>
+                                        {preview ? (
+                                            <Box sx={{ position: 'relative' }}>
+                                                <img
+                                                    src={preview}
+                                                    alt="preview"
+                                                    loading='lazy'
+                                                    style={{
+                                                        width: '100%',
+                                                        maxHeight: '320px',
+                                                        objectFit: 'contain',
+                                                        border: '1px dashed #ccc',
+                                                        borderRadius: '4px'
+                                                    }}
+                                                />
+                                                <Button
+                                                    onClick={() => {
+                                                        setPreview('');
+                                                        setFile('');
+                                                    }}
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: 8,
+                                                        right: 8,
+                                                        backgroundColor: 'error.main',
+                                                        color: 'white',
+                                                        minWidth: 'unset',
+                                                        width: '24px',
+                                                        height: '24px',
+                                                        borderRadius: '50%',
+                                                        '&:hover': {
+                                                            backgroundColor: 'error.dark'
+                                                        }
+                                                    }}
+                                                >
+                                                    ×
+                                                </Button>
                                             </Box>
-                                        </ImageList>
-                                    ) : (
-                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Typography sx={{
-                                                fontFamily: 'PT Sans', border: '2px solid #000', marginTop: '1rem',
-                                                padding: '5px', borderRadius: '2%', width: isSmallScreen ? '150px' : '320px',
-                                                height: isSmallScreen ? '150px' : '320px', display: 'flex',
-                                                justifyContent: 'center', alignItems: 'center',
-                                            }}>
-                                                Preview Image
-                                            </Typography>
-                                        </Box>
-                                    )}
-                                    <label
-                                        htmlFor="quest-img"
-                                        style={{
-                                            display: 'flex', justifyContent: 'center', fontWeight: '400',
-                                            background: '#FFDB00', color: '#070F2B', padding: '5px', marginTop: '.5rem',
-                                            fontFamily: 'Cal Sans', borderRadius: '5px', marginBottom: '2rem',
-                                        }}
-                                    >
-                                        Pilih Gambar
-                                    </label>
-                                    <input type="file" id="quest-img" onChange={loadImage} style={{ display: 'none' }} />
-                                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ fontWeight: 'bold' }}>
-                                        Kirim Pertanyaan
-                                    </Button>
+                                        ) : (
+                                            <label htmlFor="quest-img" style={{ cursor: 'pointer' }}>
+                                                <Box
+                                                    sx={{
+                                                        border: '2px dashed #ccc',
+                                                        borderRadius: '4px',
+                                                        padding: 3,
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        '&:hover': {
+                                                            borderColor: 'primary.main',
+                                                            backgroundColor: 'action.hover'
+                                                        }
+                                                    }}
+                                                >
+                                                    <AddIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+                                                    <Typography sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                                                        Klik untuk memilih gambar atau seret ke sini
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: 'text.disabled', mt: 1 }}>
+                                                        Format yang didukung: JPEG, PNG
+                                                    </Typography>
+                                                </Box>
+                                            </label>
+                                        )}
+                                        <input
+                                            type="file"
+                                            id="quest-img"
+                                            onChange={loadImage}
+                                            accept="image/jpeg, image/png"
+                                            style={{ display: 'none' }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Button
+                                            onClick={handleClose}
+                                            variant="outlined"
+                                            fullWidth
+                                            sx={{
+                                                fontFamily: 'Cal Sans',
+                                                color: 'text.primary',
+                                                borderColor: 'text.primary'
+                                            }}
+                                        >
+                                            Batal
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            fullWidth
+                                            sx={{
+                                                backgroundColor: '#FFDB00',
+                                                color: '#070F2B',
+                                                fontFamily: 'Cal Sans',
+                                                fontWeight: 'bold',
+                                                '&:hover': {
+                                                    backgroundColor: '#FFDB00',
+                                                    opacity: 0.9
+                                                }
+                                            }}
+                                        >
+                                            Kirim Pertanyaan
+                                        </Button>
+                                    </Box>
                                 </form>
                             </Box>
                         </Modal>
                     </Box>
                 </Container>
-            </section>
-
+            </Box>
             <section className="QuestionMenu" style={{ minHeight: '80vh' }}>
                 <QuestionMenu searchTerm={searchTerm} />
             </section>
-
             <section className="Footer">
                 <Footer />
             </section>

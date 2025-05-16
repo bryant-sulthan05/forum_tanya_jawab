@@ -59,7 +59,7 @@ export const authSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = true;
             state.user = action.payload;
-            localStorage.setItem('user', JSON.stringify(action.payload)); // simpan ke localStorage
+            localStorage.setItem('user', JSON.stringify(action.payload));
         });
         builder.addCase(LoginUser.rejected, (state, action) => {
             state.isLoading = false;

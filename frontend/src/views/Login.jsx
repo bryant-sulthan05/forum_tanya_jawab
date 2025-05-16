@@ -126,6 +126,20 @@ const Login = () => {
                                 Belum punya akun? Daftar di sini!
                             </Typography>
                         </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: '.6rem' }}>
+                            <Typography
+                                variant="body1"
+                                component="a"
+                                href="/ForgotPass"
+                                sx={{
+                                    fontFamily: 'PT Sans',
+                                    textDecoration: 'none',
+                                    color: '#000',
+                                }}
+                            >
+                                Lupa Password
+                            </Typography>
+                        </Box>
                     </CardContent>
                 </Card>
             </Container>

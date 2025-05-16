@@ -189,7 +189,6 @@ export const updateAnswer = async (req, res) => {
                     });
                 }
             }
-
             await Answer.update({
                 answer: answer,
                 media: null,
@@ -200,7 +199,6 @@ export const updateAnswer = async (req, res) => {
                 }
             });
         }
-
         res.status(200).json({ message: "Jawaban berhasil diedit" });
     } catch (error) {
         res.status(500).json({ message: error.message });

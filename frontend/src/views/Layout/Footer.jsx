@@ -16,21 +16,6 @@ const Footer = () => {
         <Box sx={{ backgroundColor: '#F6F6F6', mt: 4, pt: 6, pb: 3 }}>
             <Container maxWidth="lg">
                 <Grid container spacing={4}>
-                    {/* Fitur */}
-                    <Grid item xs={12} md={4}>
-                        <Typography variant="h6" sx={{ fontFamily: 'PT Sans', mb: 1 }}>
-                            Fitur
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'PT Sans', lineHeight: 1.8 }}>
-                            • Tanya Jawab Komunitas<br />
-                            • Voting Jawaban Terbaik<br />
-                            • Sistem Poin & Level<br />
-                            • Notifikasi Balasan<br />
-                            • Moderator Komunitas
-                        </Typography>
-                    </Grid>
-
-                    {/* Tentang */}
                     <Grid item xs={12} md={4}>
                         <Typography variant="h6" sx={{ fontFamily: 'PT Sans', mb: 1 }}>
                             Tentang Intelligentsia Guild
@@ -39,8 +24,6 @@ const Footer = () => {
                             Platform forum tanya jawab untuk berbagi pengetahuan dan membangun komunitas cerdas yang saling mendukung. Diskusi sehat, kontribusi positif, dan semangat belajar jadi prioritas utama kami.
                         </Typography>
                     </Grid>
-
-                    {/* Sosial Media */}
                     <Grid item xs={12} md={4}>
                         <Typography variant="h6" sx={{ fontFamily: 'PT Sans', mb: 1 }}>
                             Ikuti Kami
@@ -58,11 +41,10 @@ const Footer = () => {
                         </Box>
                     </Grid>
                 </Grid>
-
-                {/* Divider & Copyright */}
                 <Divider sx={{ my: 4 }} />
                 <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="overline" color="text.secondary" sx={{ fontFamily: 'PT Sans', fontWeight: 400 }}>
+                        Bryant
                         &copy; {new Date().getFullYear()} Intelligentsia Guild. All rights reserved.
                     </Typography>
                 </Box>
