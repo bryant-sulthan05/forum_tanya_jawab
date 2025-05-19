@@ -7,7 +7,6 @@ import {
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
-
 import Layout from './Layout/Layout';
 import Navbar from './Layout/Navbar';
 import QuestionMenu from './Components/QuestionMenu';
@@ -49,7 +48,6 @@ const Dashboard = () => {
         setFile(media);
         setPreview(URL.createObjectURL(media));
     };
-
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));

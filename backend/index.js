@@ -5,12 +5,10 @@ import dotenv from 'dotenv';
 import fileUpload from "express-fileupload";
 import db from './config/Database.js';
 import SequelizeStore from 'connect-session-sequelize';
-
 import UserRoute from './routes/UserRoute.js';
 import AuthRoute from './routes/AuthRoute.js';
 import QuestionRoute from './routes/QuestionRoute.js';
 import AnswerRoute from './routes/AnswerRoute.js';
-
 
 dotenv.config();
 

@@ -45,8 +45,12 @@ export default function Navbar() {
     }, [user]);
 
     const getdataUser = async () => {
-        const response = await axios.get('http://localhost:5000/me');
-        setdataUser(response.data);
+        try {
+            const response = await axios.get('http://localhost:5000/me');
+            setdataUser(response.data);
+        } catch (error) {
+            console.error('Error fetching user data:', error.message);
+        }
     };
 
     const logout = () => {
