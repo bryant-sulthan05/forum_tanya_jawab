@@ -5,6 +5,7 @@ import Register from "./views/Register";
 import Answer from "./views/Answer";
 import Profile from "./views/Profile";
 import ForgotPass from "./views/Components/ForgotPass";
+import UsersProfile from "./views/UsersProfile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/Answers/:id" element={<Answer />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/ForgotPass" element={<ForgotPass />} />
+          <Route path="/Profile/:id" element={<UsersProfile />} />
         </Routes>
       </BrowserRouter>
     </div>

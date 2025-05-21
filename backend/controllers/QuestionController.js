@@ -84,13 +84,6 @@ export const getQuestionsByUserId = async (req, res) => {
             where: {
                 userId: req.params.id
             },
-            include: [
-                {
-                    model: Users,
-                    as: 'user',
-                    attributes: ['id', 'name', 'username', 'image', 'url'],
-                }
-            ],
             order: [['createdAt', 'DESC']],
         });
         if (!questions) return res.status(404).json({ message: "Tidak menemukan pertanyaan, kemungkinan pertanyaan sudah dihapus" });

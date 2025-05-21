@@ -157,7 +157,7 @@ const TestProfile = () => {
 
     const getdataUser = async () => {
         try {
-            const token = localStorage.getItem('token'); // ⬅️ ambil token dari localStorage
+            const token = localStorage.getItem('token');
             const response = await axios.get('http://localhost:5000/me', {
                 headers: {
                     Authorization: `Bearer ${token}`

@@ -64,16 +64,9 @@ export const getAnswerByUser = async (req, res) => {
                 {
                     model: Question,
                     as: 'question',
-                    attributes: ['id', 'title'],
-                    include: [
-                        {
-                            model: Users,
-                            as: 'user',
-                            attributes: ['id', 'name', 'username', 'media', 'url']
-                        }
-                    ]
                 }
-            ]
+            ],
+            order: [['createdAt', 'DESC']]
         });
         res.status(200).json(answers);
     } catch (error) {

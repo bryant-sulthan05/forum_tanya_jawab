@@ -46,6 +46,11 @@ const QuestionMenu = ({ searchTerm }) => {
         navigate(`/Answers/${questionId}`);
     }
 
+    const Profile = async (userId) => {
+        await axios.get(`http://localhost:5000/profile/${userId}`);
+        navigate(`/Profile/${userId}`);
+    }
+
     const colors = ['#FFDB00', '#F9A826', '#6BCB77', '#4D96FF', '#FF6B6B', '#A66DD4'];
 
     const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
@@ -104,7 +109,7 @@ const QuestionMenu = ({ searchTerm }) => {
                                                 <Typography variant="h5" sx={{ fontFamily: 'Cal Sans', fontWeight: 400 }}>
                                                     {questions.title}
                                                 </Typography>
-                                                <Typography variant="subtitle2" sx={{ fontFamily: 'Cal Sans', fontWeight: 400 }}>
+                                                <Typography variant="subtitle2" sx={{ fontFamily: 'Cal Sans', fontWeight: 400, cursor: 'pointer' }} onClick={() => Profile(questions.user.id)}>
                                                     Pertanyaan oleh <span style={{ color: borderColor }}>{questions.user.username}</span>
                                                 </Typography>
                                                 <Typography variant="h6" color="text.secondary" sx={{ fontFamily: 'PT Sans', fontWeight: 400 }}>

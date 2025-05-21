@@ -14,7 +14,7 @@ import { verifyUser } from '../middleware/Auth.js';
 const router = express.Router();
 
 router.get('/', getAllQuestions);
-router.get('/user-question/:id', getQuestionsByUserId);
+router.get('/user-questions/:id', getQuestionsByUserId);
 router.get('/question/:id', getQuestionById);
 router.get('/my-questions', verifyUser, getMyQuestions);
 router.post('/title', getQuestionsByTitle);
