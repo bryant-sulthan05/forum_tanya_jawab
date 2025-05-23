@@ -104,7 +104,7 @@ const AnswerQuestion = () => {
 
     return (
         <Box>
-            {user ? (
+            {user && user.id !== question.userId ? (
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
